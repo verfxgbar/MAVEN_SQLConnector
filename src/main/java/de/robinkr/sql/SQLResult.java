@@ -1,6 +1,7 @@
 package de.robinkr.sql;
 
-import de.rk.sql.exceptions.ColumnFormatException;
+
+import de.robinkr.sql.exceptions.ColumnFormatException;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -33,7 +34,7 @@ public class SQLResult {
     /**
      * <p>Internal Method used for correct format of Method.</p>
      *
-     * <b>Throws {@link ColumnFormatException} if SQL-Table is setup wrong</b>
+     * <b>Throws {@link de.robinkr.sql.exceptions.ColumnFormatException} if SQL-Table is setup wrong</b>
      */
     private void getColumns() {
         this.rows.keySet().forEach(rowNumer -> {
