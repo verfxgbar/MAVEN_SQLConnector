@@ -23,9 +23,16 @@ public class SQLConnector {
             System.out.println("connected!");
     }
 
-    public SQLResult t(String s) throws SQLException {
+    /**
+     * Method used for getting SQL-Statements from the connected Database
+     *
+     * @param statement The SQL Statement (unmodified)
+     * @return an {@link SQLResult} for further use-cases
+     * @throws SQLException
+     */
+    public SQLResult execute(String statement) throws SQLException {
         Statement st = this.connection.createStatement();
-        ResultSet rs = st.executeQuery(s);
+        ResultSet rs = st.executeQuery(statement);
         /*while(rs.next()) {
             for(int i = 1; i <= meta.getColumnCount(); i++) {
                 System.out.println(rs.getString(i));
@@ -34,6 +41,10 @@ public class SQLConnector {
         return new SQLResult(rs);
     }
 
+    /**
+     * <p>Closes the main {@link Connection} from the Database</p>
+     * <p>Automatically catches the {@link SQLException} for potential exceptions</p>
+     */
     public void close() {
         try {
             this.connection.close();

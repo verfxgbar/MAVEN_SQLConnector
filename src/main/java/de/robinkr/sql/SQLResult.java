@@ -71,14 +71,19 @@ public class SQLResult {
         String[] toBeReturned = new String[this.rows.values().stream().findFirst().get().size()];
         for (int i = 0; i < this.rows.values().stream().findFirst().get().size(); i++) {
             String concat = "";
-            this.rows.forEach((k, v) -> {
+            /*this.rows.forEach((k, v) -> {
                 v.forEach(concat::concat);
-            });
+            });*/
             toBeReturned[i] = rows.values().toArray()[i].toString();
         }
         return toBeReturned;
     }
 
+    /**
+     * Closes the {@link java.sql.ResultSet} and their related Streams
+     *
+     * @throws SQLException
+     */
     public void close() throws SQLException {
         this.rs.close();
     }
