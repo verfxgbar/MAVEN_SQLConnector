@@ -65,18 +65,28 @@ public class SQLResult {
     /**
      * Gets collected Rows from
      *
-     * @return The Table as a 2D-Array of String
+     * @return a HashMap with the Row Number as Key and the Value as a String Array
      */
-    public String[] getRows() {
-        String[] toBeReturned = new String[this.rows.values().stream().findFirst().get().size()];
+    public HashMap<Integer, String[]> getRows() throws SQLException {
+        String[] defaultRowFormat = new String[this.rows.values().stream().findFirst().get().size()];
         for (int i = 0; i < this.rows.values().stream().findFirst().get().size(); i++) {
-            String concat = "";
-            /*this.rows.forEach((k, v) -> {
-                v.forEach(concat::concat);
-            });*/
-            toBeReturned[i] = rows.values().toArray()[i].toString();
+            defaultRowFormat[i] = rows.values().toArray()[i].toString();
         }
-        return toBeReturned;
+            HashMap<Integer, String[]> returned = new HashMap<>();
+
+            int columnCount = this.rs.getMetaData().getColumnCount();
+            String[] columns = new String[columnCount];
+            for (int i = 0; i < columnCount; i++)
+                columns[i] = this.rs.getMetaData().getColumnLabel(i + 1);
+            for(int i = 0; i < defaultRowFormat.length; i++) {
+                String row = defaultRowFormat[i];
+                String formatted = row.substring(1, row.length()-1);
+                String[] formattedArr = new String[formatted.split(", ").length];
+                for(int i1 = 0; i1 < formatted.split(", ").length; i1++)
+                    formattedArr[i1] = formatted.split(", ")[i1];
+                returned.put(i, formattedArr);
+            }
+        return returned;
     }
 
     /**
@@ -84,6 +94,14 @@ public class SQLResult {
      *
      * @throws SQLException
      */
+
+    /**
+     *
+     * @return the original {@link ResultSet}
+     */
+    public ResultSet getResultSet() {
+        return this.rs;
+    }
     public void close() throws SQLException {
         this.rs.close();
     }
