@@ -49,8 +49,6 @@ public class SQLResult {
             this.rows.put(i, arrList.get(i));
         }
 
-        System.out.println(this.rows.size());
-
         getColumns();
     }
 
