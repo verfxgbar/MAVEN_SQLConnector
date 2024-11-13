@@ -8,6 +8,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class SQLConnector {
@@ -74,6 +75,7 @@ public class SQLConnector {
 
     /**
      * Gets all accessable databases by running the <b>"SHOW DATABASES"</b> SQL-Command.
+     *
      * @return {@link String String[]} all accessable databases by name
      * @throws ColumnException if Databases cannot be found
      */
@@ -85,7 +87,7 @@ public class SQLConnector {
             HashMap<Integer, String[]> map = rs.getRows();
             arr = new String[map.size()];
 
-            map.forEach((k,v) -> {
+            map.forEach((k, v) -> {
                 arr[k] = v[0];
             });
 
@@ -94,6 +96,17 @@ public class SQLConnector {
         }
 
         return arr;
+    }
+    
+    public String[] getAccessableTablesFromDatabase(String databaseName) throws SQLException {
+
+        SQLResult rs = ask("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='" + databaseName + "'");
+        String[] accessableTables = new String[rs.getRows().size()];
+        rs.getRows().forEach((rowNumber, row) -> {
+            accessableTables[rowNumber] = row[0];
+        });
+
+        return accessableTables;
     }
 
     public String getUserName() {
