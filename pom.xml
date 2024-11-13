@@ -22,4 +22,10 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>""
+            </id>
+        </profile>
+    </profiles>
 </project>
