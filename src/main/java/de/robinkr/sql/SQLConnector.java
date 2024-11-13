@@ -73,6 +73,11 @@ public class SQLConnector {
         st.executeUpdate(sql);
     }
 
+    public void execute(String sql) throws SQLException {
+        Statement st = this.connection.createStatement();
+        st.execute(sql);
+    }
+
     /**
      * Gets all accessable databases by running the <b>"SHOW DATABASES"</b> SQL-Command.
      *
