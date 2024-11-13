@@ -60,7 +60,7 @@ public class SQLConnector {
                 System.out.println(rs.getString(i));
             }
         }*/
-        return new SQLResult(rs);
+        return new SQLResult(statement, this, rs);
     }
 
     /**
@@ -79,6 +79,7 @@ public class SQLConnector {
      * @return {@link String String[]} all accessable databases by name
      * @throws ColumnException if Databases cannot be found
      */
+
     public String[] getAccessableDatabases() throws ColumnException {
         String[] arr;
         try {
@@ -97,7 +98,7 @@ public class SQLConnector {
 
         return arr;
     }
-    
+
     public String[] getAccessableTablesFromDatabase(String databaseName) throws SQLException {
 
         SQLResult rs = ask("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='" + databaseName + "'");
