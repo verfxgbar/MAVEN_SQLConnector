@@ -1,16 +1,20 @@
 package de.robinkr.sql;
 
+import de.robinkr.sql.exceptions.ColumnException;
+
+import java.net.ConnectException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
 
 public class SQLConnector {
 
     public Connection connection;
 
-    public SQLConnector(String url, String usr, String pw) {
+    public SQLConnector(String url, String usr, String pw) throws ConnectException {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             DriverManager.setLoginTimeout(10);
@@ -21,9 +25,11 @@ public class SQLConnector {
 
         if (this.connection != null)
             System.out.println("connected!");
+        else
+            throw new ConnectException();
     }
 
-    public SQLConnector(String ip, String port, String database, String usr, String pw) {
+    public SQLConnector(String ip, String port, String database, String usr, String pw) throws ConnectException {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             DriverManager.setLoginTimeout(10);
@@ -34,6 +40,8 @@ public class SQLConnector {
 
         if (this.connection != null)
             System.out.println("connected!");
+        else
+            throw new ConnectException();
     }
 
     /**
@@ -63,6 +71,39 @@ public class SQLConnector {
         Statement st = this.connection.createStatement();
         st.executeUpdate(sql);
     }
+
+    /**
+     * Gets all accessable databases by running the <b>"SHOW DATABASES"</b> SQL-Command.
+     * @return {@link String String[]} all accessable databases by name
+     * @throws ColumnException if Databases cannot be found
+     */
+    public String[] getAccessableDatabases() throws ColumnException {
+        String[] arr;
+        try {
+            SQLResult rs = ask("SHOW DATABASES");
+
+            HashMap<Integer, String[]> map = rs.getRows();
+            arr = new String[map.size()];
+
+            map.forEach((k,v) -> {
+                arr[k] = v[0];
+            });
+
+        } catch (Exception e) {
+            throw new ColumnException("Die Datenbankliste konnte nicht gefunden werden!");
+        }
+
+        return arr;
+    }
+
+    public String getUserName() {
+        try {
+            return this.connection.getMetaData().getUserName();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void close() {
         try {
             this.connection.close();

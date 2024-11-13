@@ -1,7 +1,7 @@
 package de.robinkr.sql;
 
 
-import de.robinkr.sql.exceptions.ColumnFormatException;
+import de.robinkr.sql.exceptions.ColumnException;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -34,14 +34,14 @@ public class SQLResult {
     /**
      * <p>Internal Method used for correct format of Method.</p>
      *
-     * <b>Throws {@link de.robinkr.sql.exceptions.ColumnFormatException} if SQL-Table is setup wrong</b>
+     * <b>Throws {@link ColumnException} if SQL-Table is setup wrong</b>
      */
     private void getColumns() {
         this.rows.keySet().forEach(rowNumer -> {
             ArrayList<String> row = this.rows.get(rowNumer);
             for (int i = 0; i < columns.keySet().size(); i++) {
                 if (columns.keySet().toArray()[i] == null || row.get(i) == null)
-                    ColumnFormatException.own();
+                    ColumnException.own();
 
                 String columnName = (String) columns.keySet().toArray()[i];
                 columns.get(columnName).add(row.get(i));
