@@ -14,6 +14,7 @@ import java.util.HashMap;
 public class SQLConnector {
 
     public Connection connection;
+    private boolean isOffline;
 
     public SQLConnector(String url, String usr, String pw) throws ConnectException {
         try {
@@ -45,6 +46,10 @@ public class SQLConnector {
             throw new ConnectException();
     }
 
+    public SQLConnector() {
+        this.isOffline = true;
+    }
+
     /**
      * Method used for getting SQL-Statements from the connected Database
      *
@@ -53,6 +58,7 @@ public class SQLConnector {
      * @throws SQLException
      */
     public SQLResult ask(String statement) throws SQLException {
+        if (this.isOffline) return null;
         Statement st = this.connection.createStatement();
         ResultSet rs = st.executeQuery(statement);
         /*while(rs.next()) {
@@ -69,11 +75,13 @@ public class SQLConnector {
      */
 
     public void update(String sql) throws SQLException {
+        if (this.isOffline) return;
         Statement st = this.connection.createStatement();
         st.executeUpdate(sql);
     }
 
     public void execute(String sql) throws SQLException {
+        if (this.isOffline) return;
         Statement st = this.connection.createStatement();
         st.execute(sql);
     }
@@ -86,6 +94,7 @@ public class SQLConnector {
      */
 
     public String[] getAccessableDatabases() throws ColumnException {
+        if(this.isOffline) return OfflineConnection.getDatabases();
         String[] arr;
         try {
             SQLResult rs = ask("SHOW DATABASES");
@@ -105,7 +114,7 @@ public class SQLConnector {
     }
 
     public String[] getAccessableTablesFromDatabase(String databaseName) throws SQLException {
-
+        if(this.isOffline) return OfflineConnection.getTableNames(databaseName);
         SQLResult rs = ask("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='" + databaseName + "'");
         String[] accessableTables = new String[rs.getRows().size()];
         rs.getRows().forEach((rowNumber, row) -> {
